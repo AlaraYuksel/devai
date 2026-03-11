@@ -84,7 +84,7 @@ Press **`y` + Enter** and the commit will be completed automatically.
 
 
 ## Project Structure
-
+```
 devai/
 ├── src/
 │   ├── commands/       # CLI commands (commit, etc.)
@@ -93,7 +93,7 @@ devai/
 │   └── index.ts        # Application entry point and CLI configuration
 ├── package.json
 └── tsconfig.json
-
+```
 ## Configuration (Changing the Model)
 
 By default, the tool is configured to run with a **lightweight and fast model** such as gemma3:4b

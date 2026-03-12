@@ -5,31 +5,25 @@
 
 Previously fully offline, **devai** now features a **hybrid architecture**! You can seamlessly switch between a **Local AI model (Ollama)** for privacy-focused offline generation , or a **Global Cloud AI (Google Gemini)** for high-speed, advanced analysis. It analyzes your Git changes and suggests standardized commit messages within seconds.
 
-## 📋 Requirements
+## Requirements
 
 To run the tool on your computer, you need:
 
 * **Node.js** (v18 or higher)
 * **pnpm** (Package manager)
-* 
-**Ollama** (Local model runner - *required only for local mode*) 
-
-
-* 
-**Google Gemini API Key** (*required only for global mode*) 
-
-
+* **Ollama** (Local model runner - *required only for local mode*) 
+* **Google Gemini API Key** (*required only for global mode*) 
 
 ### Download Local Models
 
 If you plan to use the local provider, ensure you have downloaded your preferred Ollama model:
 
-```bash
+```
 ollama run gemma3:4b
 
 ```
 
-## ⚙️ Environment Variables (.env)
+## Environment Variables (.env)
 
 Since the project now supports Google Generative AI, you must create a `.env` file in the root directory of the project.
 
@@ -42,11 +36,11 @@ GEMINI_API_KEY=your_google_gemini_api_key_here
 
 *Note: Make sure to add `.env` to your `.gitignore` file so you don't accidentally publish your API key!*
 
-## 🚀 Installation
+## Installation
 
 Follow these steps to install the project and register it as a global CLI command:
 
-```bash
+```
 # 1. Install dependencies
 pnpm install
 
@@ -60,18 +54,18 @@ pnpm link --global
 
 After installation, verify it works:
 
-```bash
+```
 devai --help
 
 ```
 
-## 💻 Usage & Commands
+## Usage & Commands
 
 ### 1. Generating a Commit Message
 
 During a normal development workflow, stage your files and run the assistant. The tool reads your staged changes (`git diff --cached`) or unstaged changes (`git diff`).
 
-```bash
+```
 git add .
 devai commit
 
@@ -80,7 +74,7 @@ devai commit
 **Output & Confirmation:**
 The tool analyzes your changes and suggests a commit message. It then prompts you for confirmation.
 
-```text
+```
  Git değişiklikleri inceleniyor...
  Yapay Zeka düşünülüyor...
 
@@ -98,31 +92,24 @@ Press **y** or **Enter**, and the commit will be completed automatically.
 You can dynamically toggle between Local (Ollama) and Global (Gemini) AI providers. By default, the system assumes the global provider is active.
 
 * **Switch to Local Mode (Ollama):**
-```bash
+```
 devai local
 
 ```
 
-
-
 *Switches the AI provider to the locally installed model.* 
 
-
 * **Switch to Global Mode (Google Gemini):**
-```bash
+```
 devai global
 
 ```
 
-
-
 *Switches the AI provider to the cloud-based Google Gemini model (Requires `.env` setup).* 
 
+## Project Structure
 
-
-## 📁 Project Structure
-
-```text
+```
 devai/
 ├── src/
 │   ├── commands/
@@ -142,7 +129,7 @@ devai/
 
 ```
 
-## 🔧 Configuration (Changing the Model)
+## Configuration (Changing the Model)
 
 **Local Model:**
 By default, the local provider is configured to run with `gemma3:4b`. If you want to change the model, open `src/llm/local-provider.ts` and replace the `model` parameter.

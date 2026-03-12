@@ -1,9 +1,12 @@
 import { Command } from 'commander';
 import { getGitDiff } from '../utils/git.js';
 import { LocalLLMProvider } from '../llm/local-provider.js';
+import { CloudLLMProvider } from '../llm/cloud-provider.js';
+import { isGlobal } from './local-global-changer.js';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { execSync } from 'node:child_process';
+
 
 export const commitCommand = new Command('commit')
   .description('Git değişiklikleri için yapay zeka ile commit mesajı oluşturur')
@@ -20,9 +23,18 @@ export const commitCommand = new Command('commit')
     console.log(' Yapay Zeka düşünülüyor...');
     
     try {
-      const provider = new LocalLLMProvider();
-      const message = await provider.generateCommitMessage(diff);
-      
+      let message;
+
+      //Eğer global sağlayıcı aktifse cloud sağlayıcıyı, değilse local sağlayıcıyı kullanarak mesaj oluşturuyoruz.
+      if (isGlobal) {
+        const provider = new CloudLLMProvider();
+        message = await provider.generateCommitMessage(diff);
+      } 
+      else {
+        const provider = new LocalLLMProvider();
+        message = await provider.generateCommitMessage(diff);
+      }
+
       console.log('\n Önerilen Commit Mesajı:');
       console.log(message);
       

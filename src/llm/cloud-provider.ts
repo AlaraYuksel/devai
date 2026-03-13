@@ -4,7 +4,7 @@ import {model} from '../setup/geminiapisetup.js';
 export class CloudLLMProvider implements LLMProvider {
   async generateCommitMessage(diff: string): Promise<string> {
     try {
-        const cevap = await model.generateContent(`Analyze the following git changes and write a one-line commit message. Return only the message:\n\n${diff}`);
+        const cevap = await model.generateContent(`Analyze the following changes and write a one-line commit message. Return only the message:\n\n${diff}`);
         return cevap.response.text();
     }
     catch (error) {

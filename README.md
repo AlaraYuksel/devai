@@ -1,8 +1,9 @@
-## devai – AI-Powered Developer CLI
 
-**devai** is a Command Line Interface (CLI) tool that automates Git commit workflows for software developers. It is **fully local (offline)** and **privacy-focused**.
+# devai – AI-Powered Developer CLI
 
-Instead of sending your code to cloud-based APIs, it uses a **local AI model (Ollama)** running on your machine to analyze your Git changes and suggest **standardized commit messages (Conventional Commits)** within seconds.
+**devai** is a Command Line Interface (CLI) tool that automates Git commit workflows for software developers.
+
+Previously fully offline, **devai** now features a **hybrid architecture**! You can seamlessly switch between a **Local AI model (Ollama)** for privacy-focused offline generation , or a **Global Cloud AI (Google Gemini)** for high-speed, advanced analysis. It analyzes your Git changes and suggests standardized commit messages within seconds.
 
 ## Requirements
 
@@ -10,26 +11,34 @@ To run the tool on your computer, you need:
 
 * **Node.js** (v18 or higher)
 * **pnpm** (Package manager)
-* **Ollama** (Local model runner)
-* A downloaded **Ollama model**, for example:
+* **Ollama** (Local model runner - *required only for local mode*) 
+* **Google Gemini API Key** (*required only for global mode*) 
 
-  * `qwen2.5-coder:1.5b`
-  * `gemma3:4b`
+### Download Local Models
 
-To download a model, run in your terminal:
-
-```
-ollama run qwen2.5-coder:1.5b
-```
-or:
+If you plan to use the local provider, ensure you have downloaded your preferred Ollama model:
 
 ```
 ollama run gemma3:4b
+
 ```
 
-##  Installation
+## Environment Variables (.env)
 
-Follow these steps to install the project and register it as a **global CLI command**:
+Since the project now supports Google Generative AI, you must create a `.env` file in the root directory of the project.
+
+Create a `.env` file and add the following:
+
+```env
+GEMINI_API_KEY=your_google_gemini_api_key_here
+
+```
+
+*Note: Make sure to add `.env` to your `.gitignore` file so you don't accidentally publish your API key!*
+
+## Installation
+
+Follow these steps to install the project and register it as a global CLI command:
 
 ```
 # 1. Install dependencies
@@ -40,69 +49,92 @@ pnpm exec tsc
 
 # 3. Register the tool as a global command
 pnpm link --global
+
 ```
 
 After installation, verify it works:
 
 ```
 devai --help
+
 ```
 
-## Usage
+## Usage & Commands
 
-During a normal development workflow:
+### 1. Generating a Commit Message
 
-### 1. Make code changes and stage files
+During a normal development workflow, stage your files and run the assistant. The tool reads your staged changes (`git diff --cached`) or unstaged changes (`git diff`).
 
 ```
 git add .
-```
-
-### 2. Run the assistant
-
-```
 devai commit
-```
-
-### 3. Output & Confirmation
-
-The tool analyzes your changes and suggests a commit message:
 
 ```
-Analyzing Git changes...
-AI is thinking...
 
-Suggested Commit Message:
----------------------------
-feat: add local LLM integration and interactive commit
----------------------------
+**Output & Confirmation:**
+The tool analyzes your changes and suggests a commit message. It then prompts you for confirmation.
 
-Proceed with this commit message? (Y/n):
+```
+ Git değişiklikleri inceleniyor...
+ Yapay Zeka düşünülüyor...
+
+ Önerilen Commit Mesajı:
+ feat: add local LLM integration and interactive commit
+
+ Bu mesajla commit işlemi yapılsın mı? (Y/n):
+
 ```
 
-Press **`y` + Enter** and the commit will be completed automatically.
+Press **y** or **Enter**, and the commit will be completed automatically.
 
+### 2. Switching AI Providers
+
+You can dynamically toggle between Local (Ollama) and Global (Gemini) AI providers. By default, the system assumes the global provider is active.
+
+* **Switch to Local Mode (Ollama):**
+```
+devai local
+
+```
+
+*Switches the AI provider to the locally installed model.* 
+
+* **Switch to Global Mode (Google Gemini):**
+```
+devai global
+
+```
+
+*Switches the AI provider to the cloud-based Google Gemini model (Requires `.env` setup).* 
 
 ## Project Structure
+
 ```
 devai/
 ├── src/
-│   ├── commands/       # CLI commands (commit, etc.)
-│   ├── llm/            # AI providers (Local provider)
-│   ├── utils/          # Utility services (Git diff reader, etc.)
-│   └── index.ts        # Application entry point and CLI configuration
+│   ├── commands/
+│   │   ├── commit.ts               # Analyzes git diff and commits
+│   │   └── local-global-changer.ts # Toggles between AI providers
+│   ├── llm/
+│   │   ├── local-provider.ts       # Ollama integration (gemma3:4b)
+│   │   └── cloud-provider.ts       # Gemini integration (gemini-2.5-flash)
+│   ├── setup/
+│   │   └── geminiapisetup.ts       # Google Generative AI config
+│   ├── utils/
+│   │   └── git.ts                  # Git diff reader
+│   └── index.ts                    # Application entry point & CLI setup
+├── .env                            # API Keys (Create this file!)
 ├── package.json
 └── tsconfig.json
+
 ```
+
 ## Configuration (Changing the Model)
 
-By default, the tool is configured to run with a **lightweight and fast model** such as gemma3:4b
-If you want to change the model:
+**Local Model:**
+By default, the local provider is configured to run with `gemma3:4b`. If you want to change the model, open `src/llm/local-provider.ts` and replace the `model` parameter.
 
-1. Open the file:
-src/llm/local-provider.ts
+**Global Model:**
+The cloud provider uses `gemini-2.5-flash`. To change this, edit the model definition in `src/setup/geminiapisetup.ts`.
 
-2. Replace the model name with any **Ollama model** you prefer.
-
-3. Recompile the project:
-pnpm exec tsc
+*Remember to recompile the project (`pnpm exec tsc`) after making code changes.*
